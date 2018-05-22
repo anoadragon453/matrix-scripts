@@ -1,6 +1,8 @@
 username="testing-$(pwgen 4 1)"
 password="testing123"
 
+resty "http://127.0.0.1:8008"
+
 reg_res="$(POST '/_matrix/client/r0/register' '{"username": "'$username'", "password": "'$password'"}' 2>&1)"
 session="$(echo $reg_res | jq .session)"
 reg_res2="$(POST '/_matrix/client/r0/register' '{"username": "'$username'", "password": "'$password'", "auth": {"type": "m.login.dummy", "session": '$session'}}' 2>&1)"
