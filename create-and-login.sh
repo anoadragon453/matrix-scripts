@@ -16,9 +16,11 @@ device_id=$(echo "$reg_res2" | jq -r .device_id)
 export USER_ID=$user_id
 export ACCESS_TOKEN=$access_token
 export DEVICE_ID=$device_id
+export PASSWORD=$password
 
 echo ""
 echo "\$USERNAME: $user_id"
 echo "\$ACCESS_TOKEN: $access_token"
 echo "\$DEVICE_ID: $device_id"
+echo "\$PASSWORD: $password"
 resty "http://127.0.0.1:8008" -H "Authorization: Bearer $ACCESS_TOKEN"
