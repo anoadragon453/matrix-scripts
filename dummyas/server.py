@@ -21,8 +21,50 @@ class S(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
+        output = "{}"
+
+        if self.path.startswith("/_matrix/app/unstable/thirdparty/protocol/"):
+            output = self.retreive_protocol_def()
+
         self._set_headers()
-        self.wfile.write("{}")
+        self.wfile.write(output)
+
+    def retreive_protocol_def(self):
+        return '''{
+  "user_fields": [
+    "network",
+    "nickname"
+  ],
+  "location_fields": [
+    "network",
+    "channel"
+  ],
+  "icon": "mxc://example.org/aBcDeFgH",
+  "field_types": {
+    "network": {
+      "regexp": "([a-z0-9]+\\\.)*[a-z0-9]+",
+      "placeholder": "irc.example.org"
+    },
+    "nickname": {
+      "regexp": "[^\\\s]+",
+      "placeholder": "username"
+    },
+    "channel": {
+      "regexp": "#[^\\\s]+",
+      "placeholder": "#foobar"
+    }
+  },
+  "instances": [
+    {
+      "desc": "Freenode",
+      "icon": "mxc://example.org/JkLmNoPq",
+      "fields": {
+        "network": "freenode.net"
+      }
+    }
+  ]
+}
+'''
 
     def do_HEAD(self):
         self._set_headers()
