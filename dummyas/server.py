@@ -25,6 +25,10 @@ class S(BaseHTTPRequestHandler):
 
         if self.path.startswith("/_matrix/app/unstable/thirdparty/protocol/"):
             output = self.retreive_protocol_def()
+        elif self.path.startswith("/_matrix/app/unstable/thirdparty/location"):
+            output = self.location()
+        elif self.path.startswith("/_matrix/app/unstable/thirdparty/user"):
+            output = self.user()
 
         self._set_headers()
         self.wfile.write(output)
@@ -64,6 +68,31 @@ class S(BaseHTTPRequestHandler):
     }
   ]
 }
+'''
+
+    def user(self):
+        return '''[
+  {
+    "userid": "@_gitter_jim:matrix.org",
+    "protocol": "gitter",
+    "fields": {
+      "user": "jim"
+    }
+  }
+]
+'''
+
+    def location(self):
+        return '''[
+  {
+    "alias": "#freenode_#matrix:matrix.org",
+    "protocol": "irc",
+    "fields": {
+      "network": "freenode",
+      "channel": "#matrix"
+    }
+  }
+]
 '''
 
     def do_HEAD(self):
