@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Very simple HTTP server in python.
 Usage::
@@ -10,9 +10,10 @@ Send a HEAD request::
 Send a POST request::
     curl -d "foo=bar&bin=baz" http://localhost
 """
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-import SocketServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import socketserver
 import json
+
 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -21,7 +22,7 @@ class S(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        output = "{}"
+        output = b"{}"
 
         if self.path.startswith("/_matrix/app/unstable/thirdparty/protocol/"):
             output = self.retreive_protocol_def()
@@ -34,7 +35,7 @@ class S(BaseHTTPRequestHandler):
         self.wfile.write(output)
 
     def retreive_protocol_def(self):
-        return '''{
+        return b'''{
   "user_fields": [
     "network",
     "nickname"
@@ -71,7 +72,7 @@ class S(BaseHTTPRequestHandler):
 '''
 
     def user(self):
-        return '''[
+        return b'''[
   {
     "userid": "@_gitter_jim:matrix.org",
     "protocol": "gitter",
@@ -83,7 +84,7 @@ class S(BaseHTTPRequestHandler):
 '''
 
     def location(self):
-        return '''[
+        return b'''[
   {
     "alias": "#freenode_#matrix:matrix.org",
     "protocol": "irc",
@@ -101,16 +102,16 @@ class S(BaseHTTPRequestHandler):
     def do_POST(self):
         # Doesn't do anything with posted data
         self._set_headers()
-        content_len = int(self.headers.getheader('content-length', 0))
+        content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
         json_body = json.loads(post_body)
-        print json.dumps(json_body, indent=2, sort_keys=False)
-        self.wfile.write("<html><body><h1>POST!</h1></body></html>")
+        print(json.dumps(json_body, indent=2, sort_keys=False))
+        self.wfile.write(b"<html><body><h1>POST!</h1></body></html>")
         
 def run(server_class=HTTPServer, handler_class=S, port=80):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
-    print 'Starting httpd...'
+    print('Starting httpd...')
     httpd.serve_forever()
 
 if __name__ == "__main__":
